@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 
 
 @dataclass
@@ -17,3 +18,5 @@ class DataNodeStatus:
     capacity: int
     # 已使用的容量
     used: int
+    # 数据获取的时间
+    datetime: datetime

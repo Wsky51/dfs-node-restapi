@@ -1,8 +1,12 @@
 from flask import Flask, request, jsonify
 from watchdog import WatchDogOptions, WatchDog
 from type import DataNode, DataNodeStatus
+from config import options, data_nodes, get_db
+from db import DB, FileDB, MemoryDB
 
 app = Flask(__name__)
+
+db = get_db()
 
 
 def success(msg):
@@ -23,10 +27,17 @@ def site():
     return ''
 
 
-@app.route('/status', methods = ['GET'])
-def health_status():
+@app.route('/status/<str:node_id>', methods=['GET'])
+def health_status(node_id: str):
     # TODO: get the health status from the child node
-    return data({})
+    node_status = db.get(node_id)
+    return data(node_status)
+
+
+@app.route('/all_status', methods=['GET'])
+def get_all_node_status():
+    status = db.get_all()
+    return data(status)
 
 
 @app.route('/login', methods=['POST'])
@@ -39,15 +50,9 @@ def login():
 
 
 if __name__ == '__main__':
-    # 配置所有的子节点
-    data_nodes = [
-        DataNode(endpoint='127.0.0.2', port=5000),
-        DataNode(endpoint='127.0.0.3', port=5000),
-        DataNode(endpoint='127.0.0.4', port=5000),
-    ]
     # 开始运行整体程序
     watch_dog = WatchDog(
-        options=WatchDogOptions(hunger_time=3000, food_path='./node_status.json'),
+        options=options,
         data_nodes=data_nodes
     )
     watch_dog.start()
