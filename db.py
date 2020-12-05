@@ -1,9 +1,10 @@
 """save the data into db"""
 import os
 from typing import List, Dict
-import json
+import pickle
 from copy import deepcopy
 from type import DataNodeStatus
+import dataclasses
 
 
 class DB:
@@ -44,33 +45,34 @@ class FileDB(DB):
 
     def get_all(self) -> Dict[str, List[DataNodeStatus]]:
         """read data from the json file"""
-        with open(self.file, 'r', encoding='utf-8') as f:
-            data: Dict[str, List[DataNodeStatus]] = json.load(f)
+        with open(self.file, 'rb') as f:
+            data: Dict[str, List[DataNodeStatus]] = pickle.load(f)
             return data
 
     def __init__(self, file: str):
+        self.file: str = file
+
         # init the json file
         if not os.path.exists(file):
-            with open(file, 'w', encoding='utf-8') as f:
-                json.dump({}, f)
-        self.file: str = file
+            with open(file, 'wb') as f:
+                pickle.dump({}, f)
 
     def save(self, key: str, value: DataNodeStatus):
         """read data from the json file"""
-        with open(self.file, 'r', encoding='utf-8') as f:
-            data: Dict[str, List[DataNodeStatus]] = json.load(f)
+        with open(self.file, 'rb') as f:
+            data: Dict[str, List[DataNodeStatus]] = pickle.load(f)
             if key not in data:
                 data[key] = []
             data[key].append(value)
 
         # save data into the json file
-        with open(self.file, 'w', encoding='utf-8') as f:
-            json.dump(data, f)
+        with open(self.file, 'wb') as f:
+            pickle.dump(data, f)
 
     def get(self, key: str) -> List[DataNodeStatus]:
         """read data from the json file"""
-        with open(self.file, 'r', encoding='utf-8') as f:
-            data: Dict[str, List[DataNodeStatus]] = json.load(f)
+        with open(self.file, 'rb') as f:
+            data: Dict[str, List[DataNodeStatus]] = pickle.load(f)
             if key not in data:
                 data[key] = []
             return data[key]

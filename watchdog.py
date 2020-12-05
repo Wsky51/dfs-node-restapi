@@ -3,10 +3,12 @@ from type import DataNode, DataNodeStatus
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from dataclasses import dataclass
-from config import db
-
-import os
+from threading import Thread
+from wechaty_puppet import get_logger
 import socket
+
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -17,7 +19,7 @@ class WatchDogOptions:
 
 class WatchDog:
     """watch the node health of the cluster"""
-    def __init__(self, options: WatchDogOptions,  data_nodes: List[DataNode]):
+    def __init__(self, options: WatchDogOptions,  data_nodes: List[DataNode], db):
         if not data_nodes:
             raise ValueError('data_nodes is none')
         self.data_nodes = data_nodes
@@ -27,24 +29,26 @@ class WatchDog:
 
         # block scheduler
         self.scheduler = BlockingScheduler()
+        self.db = db
 
     def get_node_status(self, node: DataNode):
         """获取对应的数据，并存储到本地
-
         获取出来的数据先存储到food_path中去
         """
-        with socket.create_connection(address=(node.endpoint, node.port)) as connection:
-            data = None
-            # save data to db
-            db.save(node, data)
+        logger.info(f'fetching data from : <node:{node.node_id}> - EndPoint:<{node.endpoint}:{node.port}>')
+        # with socket.create_connection(address=(node.endpoint, node.port)) as connection:
+        #     data = None
+        #     # save data to db
+        #     self.db.save(node, data)
 
     def start(self):
         """start to watch the data nodes"""
+        logger.info('starting the watch-dog ...')
         for data_node in self.data_nodes:
             self.scheduler.add_job(
                 self.get_node_status,
                 trigger=IntervalTrigger(seconds=self.hunger_time),
                 args=(data_node,)
             )
-        self.scheduler.start()
-
+        thread = Thread(target=self.scheduler.start,)
+        thread.start()

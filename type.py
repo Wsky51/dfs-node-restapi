@@ -4,6 +4,7 @@ from datetime import datetime
 
 @dataclass
 class DataNode:
+    node_id: str
     # 子节点的ip地址
     endpoint: str
     # 子节点服务开启的端口
