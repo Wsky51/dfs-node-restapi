@@ -27,7 +27,7 @@ def site():
     return ''
 
 
-@app.route('/status/<str:node_id>', methods=['GET'])
+@app.route('/status/<string:node_id>', methods=['GET'])
 def health_status(node_id: str):
     # TODO: get the health status from the child node
     node_status = db.get(node_id)

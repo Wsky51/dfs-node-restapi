@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from type import DataNode, DataNodeStatus
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.interval import IntervalTrigger
@@ -8,7 +8,7 @@ from dataclasses import dataclass
 @dataclass
 class WatchDogOptions:
     hunger_time: int
-    food_path: str
+    food_path: Optional[str] = None
 
 
 class WatchDog:

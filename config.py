@@ -5,7 +5,7 @@ from db import DB, FileDB, MemoryDB
 from type import DataNode
 
 options = WatchDogOptions(
-    hunger_time=3000
+    hunger_time=3000,
 )
 
 data_nodes: List[DataNode] = [

@@ -1,1 +1,1 @@
-python app.py --port=5000 --host=0.0.0.0
+flask run --port=5000 --host=0.0.0.0
