@@ -3,6 +3,10 @@ from type import DataNode, DataNodeStatus
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from dataclasses import dataclass
+from config import db
+
+import os
+import socket
 
 
 @dataclass
@@ -29,6 +33,10 @@ class WatchDog:
 
         获取出来的数据先存储到food_path中去
         """
+        with socket.create_connection(address=(node.endpoint, node.port)) as connection:
+            data = None
+            # save data to db
+            db.save(node, data)
 
     def start(self):
         """start to watch the data nodes"""

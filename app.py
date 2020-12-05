@@ -1,12 +1,10 @@
 from flask import Flask, request, jsonify
 from watchdog import WatchDogOptions, WatchDog
 from type import DataNode, DataNodeStatus
-from config import options, data_nodes, get_db
+from config import options, data_nodes, db
 from db import DB, FileDB, MemoryDB
 
 app = Flask(__name__)
-
-db = get_db()
 
 
 def success(msg):

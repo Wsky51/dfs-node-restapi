@@ -4,6 +4,7 @@ from watchdog import WatchDogOptions
 from db import DB, FileDB, MemoryDB
 from type import DataNode
 
+
 options = WatchDogOptions(
     hunger_time=3000,
 )
@@ -16,4 +17,9 @@ data_nodes: List[DataNode] = [
 
 
 def get_db() -> DB:
-    return MemoryDB()
+    # save data to the json file
+    file_db = FileDB(file='./db.json')
+    return file_db
+
+
+db = get_db()
