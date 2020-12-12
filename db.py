@@ -4,6 +4,7 @@ from typing import List, Dict
 import pickle
 from copy import deepcopy
 from type import DataNodeStatus
+import json
 import dataclasses
 
 
@@ -76,3 +77,22 @@ class FileDB(DB):
             if key not in data:
                 data[key] = []
             return data[key]
+
+
+class JsonDB:
+    def __init__(self):
+        self.file = "./db.json"
+
+    def save(self, value: str):
+        with open(self.file, 'a+', encoding='utf-8') as f:
+            # 读取文件最后n行数据即可
+            f.write(value + '\n')
+
+    def get(self, latest: int = 10) -> List[str]:
+        """"""
+        with open(self.file, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+            status = lines[-latest:]
+
+        status = [json.loads(item) for item in status]
+        return status

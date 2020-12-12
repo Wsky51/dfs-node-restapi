@@ -1,10 +1,15 @@
-from typing import List
-from watchdog import WatchDogOptions
-
-from db import DB, FileDB, MemoryDB
+from dataclasses import dataclass
+from typing import List, Optional
+from db import JsonDB
 from type import DataNode
 from datetime import datetime
 import struct
+
+
+@dataclass
+class WatchDogOptions:
+    hunger_time: int
+    food_path: Optional[str] = None
 
 name_node_ip="10.103.9.11"
 name_node_port = 24269  # NameNode监听端口
@@ -26,10 +31,12 @@ data_nodes: List[DataNode] = [
 ]
 
 
-def get_db() -> DB:
+def get_db() -> JsonDB:
     # save data to the json file
-    file_db = FileDB(file='/Users/wuyi/codeProject/PycharmProjects/dfs-all/wuyi-master-node/db.bin')
-    return file_db
+    # cwd = os.getcwd()
+    # file_path = os.path.join(cwd, 'db.json')
+    # file_db = FileDB(file=file_path)
+    return JsonDB()
 
 
 def get_second_datetime() -> datetime:
@@ -46,7 +53,7 @@ def get_second_datetime() -> datetime:
 
 def strong_sck_send(socket, data):
     size = len(data)
-    idx = 0;
+    idx = 0
 
     # 先告知对端目前要发送的数据量大小是多少
     socket.send(struct.pack('L', size))
