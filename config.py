@@ -23,6 +23,7 @@ options = WatchDogOptions(
 )
 
 datetime_format = "%Y-%m-%d %H:%M:%S"
+show_data_num = 100
 
 data_nodes: List[DataNode] = [
     DataNode(endpoint='thumm02', port=5000, node_id='thumm02'),
