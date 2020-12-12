@@ -4,6 +4,7 @@ from datetime import datetime
 
 @dataclass
 class DataNode:
+    #节点id
     node_id: str
     # 子节点的ip地址
     endpoint: str
@@ -13,6 +14,8 @@ class DataNode:
 
 @dataclass
 class DataNodeStatus:
+    #主机名
+    hostname:str
     # 是否已宕机
     dead: bool
     # 已分配的整体容量

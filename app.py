@@ -3,11 +3,13 @@ from typing import List
 from flask import Flask, request, jsonify
 from watchdog import WatchDogOptions, WatchDog
 from type import DataNode, DataNodeStatus
-from config import options, data_nodes, get_db, datetime_format, get_second_datetime
+from config import *
+
 from utils import sort_and_set_datetime
 from db import DB, FileDB, MemoryDB
-from flask_cors import CORS
+# from flask_cors import CORS
 from datetime import datetime
+import socket
 
 from wechaty_puppet import get_logger
 
@@ -16,7 +18,7 @@ logger = get_logger(__name__)
 
 app = Flask(__name__)
 
-CORS(app)
+# CORS(app)
 
 db = get_db()
 
@@ -38,7 +40,6 @@ def site():
     """show the vue dist files"""
     return ''
 
-
 @app.route('/status/<string:node_id>', methods=['GET'])
 def health_status(node_id: str):
     # TODO: get the health status from the child node
@@ -46,20 +47,33 @@ def health_status(node_id: str):
     node_status = db.get(node_id)
     return data(node_status)
 
+#test data
+@app.route('/hello', methods=['GET'])
+def hello():
+    name_node_sock = socket.socket()
+    name_node_sock.connect((name_node_ip, name_node_port))
+
+    request="getAllData"
+    strong_sck_send(name_node_sock, str_encode_utf8(request))
+    # fat_pd = self.name_node_sock.recv(BUF_SIZE)
+    res = strong_sck_recv(name_node_sock)
+    res=utf8_decode_str(res)
+    return "res:"+res
 
 @app.route('/all_status', methods=['GET'])
 def get_all_node_status():
-
     status = db.get_all()
-
+    print("status:",status)
     if not status:
-        return []
-
+        return data(status)
+    print("没有进入status")
     # 构造前端对应的数据
     node_ids = [data_node.node_id for data_node in data_nodes]
+    print("node_ids:",node_ids)
     series_data = []
     all_times: List[datetime] = []
     for node_id in node_ids:
+
         if node_id in status:
             node_status = status[node_id]
             used_data = {

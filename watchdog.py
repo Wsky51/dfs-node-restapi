@@ -5,8 +5,8 @@ from apscheduler.triggers.interval import IntervalTrigger
 from dataclasses import dataclass
 from threading import Thread
 from wechaty_puppet import get_logger
+from config import *
 import socket
-
 
 logger = get_logger(__name__)
 
@@ -35,6 +35,17 @@ class WatchDog:
         """获取对应的数据，并存储到本地
         获取出来的数据先存储到food_path中去
         """
+
+        name_node_sock = socket.socket()
+        name_node_sock.connect((name_node_ip, name_node_port))
+
+        request = "getAllData"
+        strong_sck_send(name_node_sock, str_encode_utf8(request))
+        # fat_pd = self.name_node_sock.recv(BUF_SIZE)
+        data = strong_sck_recv(name_node_sock)
+        data = utf8_decode_str(data)
+        self.db.save(node, data)
+
         logger.info(f'fetching data from : <node:{node.node_id}> - EndPoint:<{node.endpoint}:{node.port}>')
         # with socket.create_connection(address=(node.endpoint, node.port)) as connection:
         #     data = None
