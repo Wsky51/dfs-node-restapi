@@ -65,9 +65,8 @@ def hello():
 
 @app.route('/all_status', methods=['GET'])
 def get_all_node_status():
-
     db = JsonDB()
-    status = db.get(10)
+    status = db.get(show_data_num)
 
     nodes, time_lines, series = [], [], {}
     if status:
@@ -80,16 +79,20 @@ def get_all_node_status():
                     series[data_node['host']] = {
                         "name": data_node['host'],
                         "type": "line",
-                        "stack": "比例",
-                        "data": []
+                        "data": [],
+                        "metadata": [],
                     }
                 prop = data_node['mem_prop']
                 prop = prop[:-1]
                 series[data_node['host']]['data'].append(float(prop))
+                series[data_node['host']]['metadata'].append(data_node)
+
+    summary = status[0] if status else {}
     return data({
         "nodes": nodes,
         "time_lines": time_lines,
-        "series": [value for key, value in series.items()]
+        "series": [value for key, value in series.items()],
+        "summary": summary
     })
 
 
