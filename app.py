@@ -83,7 +83,9 @@ def get_all_node_status():
                         "stack": "比例",
                         "data": []
                     }
-                series[data_node['host']]['data'].append(data_node['mem_prop'])
+                prop = data_node['mem_prop']
+                prop = prop[:-1]
+                series[data_node['host']]['data'].append(float(prop))
     return data({
         "nodes": nodes,
         "time_lines": time_lines,
