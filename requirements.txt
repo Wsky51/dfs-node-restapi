@@ -3,3 +3,4 @@ apscheduler
 easy-cache
 chatie-grpc
 wechaty-puppet
+Flask-Cors
